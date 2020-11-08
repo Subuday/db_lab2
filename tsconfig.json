@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+      "outDir": "./dist",
+      "baseUrl": ".",
+      "paths": {
+          "@routes/*":      [ "routes/*"       ],
+          "@models/*":      [ "models/*"       ],
+          "@controllers/*": [ "controllers/*"  ],
+          "@app/*":         [ "./*"            ],
+      },
+      "target":           "es2018",  // es-tspm package currently supports ^es2018
+      "lib":              ["esnext", "dom"],
+      "module":           "commonjs",
+      "moduleResolution": "node",
+      "sourceMap":        false,
+      "declaration":      false, 
+      "declarationMap":   false, 
+      "esModuleInterop":  true,
+      "allowSyntheticDefaultImports": true,
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata":  true,  
+      "strict":                           true,
+      "noUnusedLocals":                   true,
+      "noUnusedParameters":               false,
+      "noImplicitAny":                    true,
+      "noImplicitThis":                   true,
+      "noImplicitReturns":                true,
+      "noFallthroughCasesInSwitch":       true,
+      "noStrictGenericChecks":            false,
+      "strictFunctionTypes":              true,
+      "strictNullChecks":                 false,
+      "allowUnreachableCode":             false,
+      "forceConsistentCasingInFileNames": true,
+      "alwaysStrict": true,
+      "pretty":       true
+  },
+  "files": ["index.ts"],
+  "include": [
+      "**/*",
+  ],
+  "exclude": [
+      "node_modules/**/*", "build"
+  ]
+}
