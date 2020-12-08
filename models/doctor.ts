@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { DataSource } from "@app/data-source/data-source";
+import { Hospital } from "./hospital";
 
 export class Doctor {
 
@@ -12,23 +13,28 @@ export class Doctor {
         public birthdate: Date
     ) {}
 
-    public static async getById(entityId: number): Promise<Doctor> {
-        const query = 'SELECT * FROM public."doctor" WHERE public."doctor".id = $1';
+    public static async getById(entityId: number): Promise<[Doctor, Hospital]> {
+        const query = `SELECT * FROM public."doctor" 
+                        INNER JOIN public."hospital" ON public."doctor".hospital_id = public."hospital".id
+                        WHERE public."doctor".id = $1`;
         const { rows } = await DataSource.getPool().query(query, [entityId]);
         if (!rows.length) {
             throw Error('No entity with such id found');
         }
-        const { id, hospital_id, name, surname, specialization, birthdate } = rows[0];
-        return new Doctor(id, hospital_id, name, surname, specialization, birthdate);
+        const { hospital_id, name, surname, specialization, birthdate, average_score, address } = rows[0];
+        return [new Doctor(entityId, hospital_id, name, surname, specialization, birthdate), new Hospital(hospital_id, average_score, address)];
     }
 
-    public static async getAll(): Promise<Doctor[]> {
-        const query = 'SELECT * FROM public."doctor"';
+    public static async getAll(): Promise<Map<Doctor, Hospital>> {
+        const query = `SELECT public."doctor".*, public."hospital".average_score, public."hospital".address FROM public."doctor"
+        INNER JOIN public."hospital" ON public."doctor".hospital_id = public."hospital".id`;
         const { rows } = await DataSource.getPool().query(query);
-        return rows.map((row) => {
-            const { id, hospital_id, name, surname, specialization, birthdate } = row;
-            return new Doctor(id, hospital_id, name, surname, specialization, birthdate);
+        const data = new Map()
+        rows.forEach((row) => {
+            const { id, hospital_id, name, surname, specialization, birthdate, average_score, address} = row;
+            data.set(new Doctor(id, hospital_id, name, surname, specialization, birthdate), new Hospital(hospital_id, address, average_score));
         });
+        return data;
     } 
 
     public static async create(hospitalId: number, name: string, surname: string, specialization: string, birthdate: Date): Promise<Doctor> {

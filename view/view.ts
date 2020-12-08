@@ -68,4 +68,11 @@ export class View {
         return;
     }
 
+    public static printMapEntities(entities: Map<any, any>): void {
+        entities.forEach((value, key) => {
+            console.log(key);
+            console.log(value);
+        })
+    }
+
 }

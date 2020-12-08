@@ -73,7 +73,7 @@ export class Controller {
                     break;
                 }
                 case 3: {
-                    View.printEntities(await Doctor.getAll());
+                    View.printMapEntities(await Doctor.getAll());
                     break;
                 }
                 default: {
@@ -104,7 +104,9 @@ export class Controller {
                     break;
                 }
                 case 3: {
-                    View.printEntities([await Doctor.getById(id)]);
+                   const [ doctor, hospital ] = await Doctor.getById(id)
+                    View.printEntities(doctor);
+                    View.printEntities(hospital);
                     break;
                 }
                 default: {
