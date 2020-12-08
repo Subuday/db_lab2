@@ -216,7 +216,6 @@ export class Controller {
                 }
                 case 2: {
                     await Hospital.delete(id);
-                    await Doctor.deleteAll(id);
                     View.printLine("Success");
                     break;
                 }

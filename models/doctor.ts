@@ -52,6 +52,8 @@ export class Doctor {
 
     public static async delete(id: number): Promise<void> {
         const query = `DELETE FROM public."doctor" WHERE public."doctor".id = $1;`;
+        const query2 = `DELETE FROM public."doctor_has_animal" WHERE "doctor_has_animal".doctor_id = $1;`
+        await DataSource.getPool().query(query2, [id]);
         const { rowCount } = await DataSource.getPool().query(query, [id]);
         if(!rowCount) {
             throw new Error('No entity with such id found');
@@ -60,6 +62,12 @@ export class Doctor {
 
     public static async deleteAll(hospitalId: number): Promise<void> {
         const query = `DELETE FROM public."doctor" WHERE public."doctor".hospital_id = $1;`;
+        const query2 = `DELETE FROM public."doctor_has_animal" WHERE "doctor_has_animal".doctor_id = $1;`
+        const query3 = `SELECT * FROM public."doctor" WHERE public."doctor".hospital_id = $1;`
+        const { rows } = await DataSource.getPool().query(query3, [hospitalId]);
+        rows.forEach(async row => {
+            await DataSource.getPool().query(query2, [row.id])
+        })
         const { rowCount } = await DataSource.getPool().query(query, [hospitalId]);
         if(!rowCount) {
             throw new Error('No entities with such id found');

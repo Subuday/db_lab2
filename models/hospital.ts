@@ -48,10 +48,15 @@ export class Hospital {
 
     public static async delete(id: number): Promise<void> {
         const query = `DELETE FROM public."hospital" WHERE public."hospital".id = $1;`;
-        const { rowCount } = await DataSource.getPool().query(query, [id]);
-        if(!rowCount) {
-            throw new Error('No entity with such id found');
-        }
+        const query2 = `DELETE FROM public."doctor" WHERE public."doctor".hospital_id = $1;`
+        const query3 = `SELECT * FROM public."doctor" WHERE public."doctor".hospital_id = $1`
+        const query4 = `DELETE FROM public."doctor_has_animal" WHERE "doctor_has_animal".doctor_id = $1`
+        const { rows } = await DataSource.getPool().query(query3, [id]);
+        rows.forEach(async row => {
+            await DataSource.getPool().query(query4, [row.id])
+        })
+        await DataSource.getPool().query(query2, [id]);
+        await DataSource.getPool().query(query, [id]);
     }
 
     public static async generate(amount: number): Promise<void> {

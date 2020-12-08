@@ -51,6 +51,8 @@ export class Animal {
 
     public static async delete(id: number): Promise<void> {
         const query = `DELETE FROM public."animal" WHERE public."animal".id = $1;`;
+        const query2 = `DELETE FROM public."doctor_has_animal" WHERE "doctor_has_animal".animal_id = $1`
+        await DataSource.getPool().query(query2, [id]);
         const { rowCount } = await DataSource.getPool().query(query, [id]);
         if(!rowCount) {
             throw new Error('No entity with such id found');
